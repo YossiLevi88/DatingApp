@@ -40,13 +40,13 @@ namespace DatingApp.API
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).
                 AddJwtBearer(opt =>
                 {
-                    opt.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+                    opt.TokenValidationParameters = new TokenValidationParameters()
                     {
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(
                             Configuration.GetSection("AppSettings:Token").Value)),
                         ValidateIssuer = false,
-                        ValidateAudience = true                    };
+                        ValidateAudience = false                    };
                 });
         }
 
