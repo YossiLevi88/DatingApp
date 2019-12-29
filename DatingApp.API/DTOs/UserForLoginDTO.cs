@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DatingApp.API.DTOs
 {
-    public class UserToRegisterDTO
+    public class UserForLoginDTO
     {
         [Required]
         public string UserName { get; set; }
