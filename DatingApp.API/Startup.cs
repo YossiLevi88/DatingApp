@@ -17,6 +17,10 @@ using DatingApp.API.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Net;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http;
+using DatingApp.API.Helpers;
 
 namespace DatingApp.API
 {
@@ -46,7 +50,8 @@ namespace DatingApp.API
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(
                             Configuration.GetSection("AppSettings:Token").Value)),
                         ValidateIssuer = false,
-                        ValidateAudience = false                    };
+                        ValidateAudience = false
+                    };
                 });
         }
 
@@ -57,7 +62,23 @@ namespace DatingApp.API
             {
                 app.UseDeveloperExceptionPage();
             }
+            else
+            {
+                app.UseExceptionHandler(builder =>
+                {
+                    builder.Run(async conrext =>
+                    {
+                        conrext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
+                        var error = conrext.Features.Get<IExceptionHandlerFeature>();
+                        if (error != null)
+                        {
+                            conrext.Response.AddApplicationError(error.Error.Message);
+                            await conrext.Response.WriteAsync(error.Error.Message);
+                        }
+                    });
+                });
+            }
             // app.UseHttpsRedirection();
 
             app.UseRouting();
