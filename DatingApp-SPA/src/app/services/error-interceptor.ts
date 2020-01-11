@@ -19,6 +19,9 @@ export class ErrorInterseptor implements HttpInterceptor {
                 if (error.status === 402) {
                     return throwError(error.statusText);
                 }
+                if (error.status === 401) {
+                    return throwError('worng user name or password');
+                }
                 if (error instanceof HttpErrorResponse) {
                     const applicationError = error.headers.get('Application-Error');
 
