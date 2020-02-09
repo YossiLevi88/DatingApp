@@ -4,7 +4,6 @@ import { User } from 'src/app/_models/user';
 import { AlertifyService } from 'src/app/services/alertify.service';
 import { ActivatedRoute } from '@angular/router';
 import { NgxGalleryOptions, NgxGalleryImage, NgxGalleryAnimation } from 'ngx-gallery';
-import { fstat } from 'fs';
 
 @Component({
   selector: 'app-member-detail',

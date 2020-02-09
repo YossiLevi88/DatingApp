@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using DatingApp.API.Data;
 using DatingApp.API.DTOs;
 using DatingApp.API.Models;
@@ -21,11 +22,13 @@ namespace DatingApp.API.Controllers
     {
         private readonly IAuthRepository _repo;
         private readonly IConfiguration _config;
+        private readonly IMapper _mapper;
 
-        public AuthController(IAuthRepository repo, IConfiguration configuration)
+        public AuthController(IAuthRepository repo, IConfiguration configuration, IMapper mapper)
         {
             _repo = repo;
             _config = configuration;
+            _mapper = mapper;
         }
 
         [HttpPost("register")]
@@ -49,16 +52,15 @@ namespace DatingApp.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserForLoginDTO userForLoginDTO)
         {
+            var userFromRepo = await _repo.LogIn(userForLoginDTO.UserName.ToLower(), userForLoginDTO.Password);
 
-            var user = await _repo.LogIn(userForLoginDTO.UserName.ToLower(), userForLoginDTO.Password);
-
-            if (user == null)
+            if (userFromRepo == null)
                 return Unauthorized();
 
             var claims = new[]
             {
-                new Claim(ClaimTypes.NameIdentifier,user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.UserName)
+                new Claim(ClaimTypes.NameIdentifier,userFromRepo.Id.ToString()),
+                new Claim(ClaimTypes.Name, userFromRepo.UserName)
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8
@@ -76,9 +78,12 @@ namespace DatingApp.API.Controllers
             var handler = new JwtSecurityTokenHandler();
             var token = handler.CreateToken(tokenDescriptor);
 
+            var user = _mapper.Map<UserForListDTO>(userFromRepo);
+
             return Ok(new
             {
-                token = handler.WriteToken(token)
+                token = handler.WriteToken(token),
+                user
             });
         }
     }
