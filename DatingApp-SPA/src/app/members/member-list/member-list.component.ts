@@ -3,7 +3,7 @@ import { UserService } from 'src/app/services/user.service';
 import { AlertifyService } from 'src/app/services/alertify.service';
 import { User } from 'src/app/_models/user';
 import { ActivatedRoute } from '@angular/router';
-import { Pagination, PaginationResult } from 'src/app/_models/Pagination';
+import { Pagination, PaginationResult } from 'src/app/_models/pagination';
 import { PaginationModule } from 'ngx-bootstrap';
 
 @Component({
